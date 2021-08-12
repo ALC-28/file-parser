@@ -15,7 +15,14 @@ export class UploadService {
     callback(null, true);
   }
 
-  public uploadFiles(files: any) {
-    console.log('files', files);
+  public uploadFiles(files: any): Promise<any> {
+    const data = files.map(file => {
+      return {
+        data: file.buffer.toString().split('\n').map(line => line.split(
+          file.originalname.endsWith('.csv') ? '"' : '\t'
+        ))
+      };
+    });
+    return Promise.resolve(data);
   }
 }

@@ -9,7 +9,6 @@ export class UploadController {
   @Post()
   @UseInterceptors(FilesInterceptor('files', 2, {fileFilter: UploadService.fileFilter}))
   uploadFiles(@UploadedFiles() files): Promise<any> {
-    this.uploadService.uploadFiles(files);
-    return Promise.resolve('ok');
+    return this.uploadService.uploadFiles(files);
   }
 }
