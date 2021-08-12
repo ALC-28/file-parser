@@ -1,0 +1,17 @@
+<p-toast></p-toast>
+<h1>Upload</h1>
+<p-fileUpload
+  name="files"
+  (onUpload)="onFileUpload($event)"
+  [multiple]="true" 
+  accept=".csv, .prn"
+  [fileLimit]="2"
+  [customUpload]="true"
+  (uploadHandler)="onFilesSend($event.files)"
+>
+  <ng-template pTemplate="content">
+    <ul *ngIf="uploadedFiles.length">
+      <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+    </ul>
+  </ng-template>
+</p-fileUpload>
