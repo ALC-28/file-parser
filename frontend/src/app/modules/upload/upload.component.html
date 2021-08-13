@@ -1,5 +1,5 @@
 <p-toast></p-toast>
-<h1>Upload</h1>
+<h1>Custom upload</h1>
 <p-fileUpload
   name="files"
   (onUpload)="onFileUpload($event)"
@@ -15,6 +15,9 @@
     </ul>
   </ng-template>
 </p-fileUpload>
+
+<h1>Upload predefined</h1>
+<p-button *ngFor="let fileName of predefinedFiles" [label]="fileName" (onClick)="uploadPredefined(fileName)"></p-button>
 
 <ng-container *ngFor="let file of displayedFiles$ | async">
   <h2>{{file.name}}</h2>

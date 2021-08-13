@@ -16,4 +16,8 @@ export class UploadService {
     }
     return this.httpClient.post<FileData[]>('api/upload', body);
   }
+
+  public uploadPredefinedFile(fileName: string): Observable<FileData> {
+    return this.httpClient.post<FileData>('api/upload/predefined', {fileName});
+  }
 }

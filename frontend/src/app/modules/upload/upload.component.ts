@@ -9,6 +9,7 @@ import { UploadService } from 'src/app/services/upload.service';
   styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent {
+  public predefinedFiles: string[] = ['Workbook2.csv', 'Workbook2.prn'];
   public uploadedFiles: any[] = [];
   public displayedFiles$: BehaviorSubject<FileData[] & any> = new BehaviorSubject(null);
 
@@ -18,6 +19,13 @@ export class UploadComponent {
     for (let file of event.files) {
       this.uploadedFiles.push(file);
     }
+  }
+
+  public uploadPredefined(fileName: string) {
+    this.uploadService.uploadPredefinedFile(fileName).subscribe(response => {
+      this,this.uploadedFiles = [];
+      this.displayedFiles$.next([response]);
+    });
   }
 
   public onFilesSend(files: any): void {

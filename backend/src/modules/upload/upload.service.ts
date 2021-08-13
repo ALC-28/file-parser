@@ -19,41 +19,34 @@ export class UploadService {
 
   public uploadFiles(files: any): Promise<any> {
     const data = files.map(file => {
-      const fileExtension = file.originalname.split('.').pop();
-      const fileContent = (file.buffer as Buffer).toString('utf8');
-      switch (fileExtension) {
-        case 'prn': return {
-          name: file.originalname,
-          content: this.parsePrn(fileContent, [16, 22, 9, 14, 13, 8])
-        };
-        case 'csv': return {
-          name: file.originalname,
-          content: this.parseCsv(fileContent)
-        };
-        default: return null;
-      }
+      const fileContent = (file.buffer as Buffer).toString('latin1');
+      return this.createParsedFileContent(file.originalname, fileContent);
     });
     return Promise.resolve(data);
   }
 
-  public writeFiles(files: any): any {
-    for (let i=0; i<files.length; i++) {
-      fs.createWriteStream(files[i].originalname, {encoding: 'utf8'}).write(files[i].buffer);
-
-      /* fs.writeFile(files[i].originalname, files[i].buffer, (err) => {
-        if (err) return console.log(err);
-        console.log('Hello World > helloworld.txt');
-      }); */
+  public uploadPredefinedFile(fileName: string): Promise<any> {
+    try {
+      const fileContent = fs.readFileSync(fileName, 'latin1');
+      const data = this.createParsedFileContent(fileName, fileContent);
+      return Promise.resolve(data);
+    } catch(e) {
+      console.log('Error:', e.stack);
     }
   }
 
-  public readFile(fileExtension: string) {
-    try {
-      const filePath = `Workbook2.${fileExtension}`;   
-      const data = fs.readFileSync(filePath, 'utf8');
-      console.log(data.toString());    
-    } catch(e) {
-      console.log('Error:', e.stack);
+  private createParsedFileContent(name: string, content: string): any {
+    const fileExtension = name.split('.').pop();
+    switch (fileExtension) {
+      case 'prn': return {
+        name,
+        content: this.parsePrn(content, [16, 22, 9, 14, 13, 8])
+      };
+      case 'csv': return {
+        name,
+        content: this.parseCsv(content)
+      };
+      default: return null;
     }
   }
 
