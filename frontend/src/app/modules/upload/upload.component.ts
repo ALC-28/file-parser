@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { FileData } from 'src/app/interfaces/file-data.interface';
 import { UploadService } from 'src/app/services/upload.service';
 
 @Component({
@@ -8,6 +10,7 @@ import { UploadService } from 'src/app/services/upload.service';
 })
 export class UploadComponent {
   public uploadedFiles: any[] = [];
+  public displayedFiles$: BehaviorSubject<FileData[] & any> = new BehaviorSubject(null);
 
   constructor(private uploadService: UploadService) { }
 
@@ -19,7 +22,7 @@ export class UploadComponent {
 
   public onFilesSend(files: any): void {
     this.uploadService.uploadFiles(files).subscribe(response => {
-      console.log('r', response);
+      this.displayedFiles$.next(response);
     });
   }
 

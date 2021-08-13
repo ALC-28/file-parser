@@ -15,3 +15,26 @@
     </ul>
   </ng-template>
 </p-fileUpload>
+
+<ng-container *ngFor="let file of displayedFiles$ | async">
+  <h2>{{file.name}}</h2>
+  <p-table [value]="file.content">
+    <ng-template pTemplate="header">
+      <tr>
+        <th *ngFor="let header of file.content[0]">{{header}}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+      <tr *ngIf="rowIndex > 0">
+        <td *ngFor="let cell of item">{{cell}}</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+      <tr>
+        <td [attr.colspan]="columns.length">
+          No files content loaded
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</ng-container>
