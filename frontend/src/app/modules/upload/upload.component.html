@@ -18,14 +18,14 @@
       <small>2. Upload files</small><br />
       <small>3. Data is rendered below</small>
     </div>
-    <p-fileUpload
+    <p-fileUpload #fileUpload
       name="files"
       (onUpload)="onFileUpload($event.files)"
       [multiple]="true" 
       accept=".csv, .prn"
       [fileLimit]="2"
       [customUpload]="true"
-      (uploadHandler)="onFilesSend($event.files)"
+      (uploadHandler)="onFilesSend($event.files, fileUpload)"
     >
       <ng-template pTemplate="content">
         <ul *ngIf="uploadedFiles.length">

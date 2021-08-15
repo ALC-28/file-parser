@@ -22,14 +22,14 @@ export class UploadComponent {
 
   public uploadPredefined(fileName: string): void {
     this.uploadService.uploadPredefinedFile(fileName).subscribe(response => {
-      this.uploadedFiles = [];
       this.displayedFiles$.next([response]);
     });
   }
 
-  public onFilesSend(files: any): void {
+  public onFilesSend(files: any, element: any): void {
+    element.clear();
+    element.uploadedFileCount = 0;
     this.uploadService.uploadFiles(files).subscribe(response => {
-      this.uploadedFiles = [];
       this.displayedFiles$.next(response);
     });
   }
