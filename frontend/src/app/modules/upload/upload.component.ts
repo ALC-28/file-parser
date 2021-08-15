@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { FileData } from 'src/app/interfaces/file-data.interface';
 import { UploadService } from 'src/app/services/upload.service';
 
 @Component({
@@ -11,25 +10,26 @@ import { UploadService } from 'src/app/services/upload.service';
 export class UploadComponent {
   public predefinedFiles: string[] = ['Workbook2.csv', 'Workbook2.prn'];
   public uploadedFiles: any[] = [];
-  public displayedFiles$: BehaviorSubject<FileData[] & any> = new BehaviorSubject(null);
+  public displayedFiles$: BehaviorSubject<any> = new BehaviorSubject(null);
 
   constructor(private uploadService: UploadService) { }
 
-  public onFileUpload(event: any): void {
-    for (let file of event.files) {
+  public onFileUpload(files: any): void {
+    for (let file of files) {
       this.uploadedFiles.push(file);
     }
   }
 
-  public uploadPredefined(fileName: string) {
+  public uploadPredefined(fileName: string): void {
     this.uploadService.uploadPredefinedFile(fileName).subscribe(response => {
-      this,this.uploadedFiles = [];
+      this.uploadedFiles = [];
       this.displayedFiles$.next([response]);
     });
   }
 
   public onFilesSend(files: any): void {
     this.uploadService.uploadFiles(files).subscribe(response => {
+      this.uploadedFiles = [];
       this.displayedFiles$.next(response);
     });
   }

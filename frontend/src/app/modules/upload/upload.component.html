@@ -1,26 +1,43 @@
 <p-toast></p-toast>
-<h1>Custom upload</h1>
-<p-fileUpload
-  name="files"
-  (onUpload)="onFileUpload($event)"
-  [multiple]="true" 
-  accept=".csv, .prn"
-  [fileLimit]="2"
-  [customUpload]="true"
-  (uploadHandler)="onFilesSend($event.files)"
->
-  <ng-template pTemplate="content">
-    <ul *ngIf="uploadedFiles.length">
-      <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
-    </ul>
-  </ng-template>
-</p-fileUpload>
-
-<h1>Upload predefined</h1>
-<p-button *ngFor="let fileName of predefinedFiles" [label]="fileName" (onClick)="uploadPredefined(fileName)"></p-button>
+<div class="grid">
+  <div class="col-6">
+    <h2>Predefined upload</h2>
+    <div class="mb-3">
+      <small>Files will be directly uploaded from the server and rendered below</small><br />
+    </div>
+    <p-button *ngFor="let fileName of predefinedFiles" 
+      [label]="fileName" 
+      (onClick)="uploadPredefined(fileName)"
+      class="mr-2"
+    ></p-button>
+  </div>
+  <div class="col-6">
+    <h2>Custom upload</h2>
+    <div class="mb-3">
+      <small>1. Choose files (limited to 2 files, 'Workbook2.csv' and 'Workbook2.prn' allowed)</small><br />
+      <small>2. Upload files</small><br />
+      <small>3. Data is rendered below</small>
+    </div>
+    <p-fileUpload
+      name="files"
+      (onUpload)="onFileUpload($event.files)"
+      [multiple]="true" 
+      accept=".csv, .prn"
+      [fileLimit]="2"
+      [customUpload]="true"
+      (uploadHandler)="onFilesSend($event.files)"
+    >
+      <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+          <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+        </ul>
+      </ng-template>
+    </p-fileUpload>
+  </div>
+</div>
 
 <ng-container *ngFor="let file of displayedFiles$ | async">
-  <h2>{{file.name}}</h2>
+  <h3>{{file.name}}</h3>
   <p-table [value]="file.content">
     <ng-template pTemplate="header">
       <tr>

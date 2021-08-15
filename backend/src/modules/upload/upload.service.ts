@@ -1,6 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as fs from 'fs';
 import * as csvParser from 'csv-parse/lib/sync';
+import { FileContent } from 'src/interfaces/file-content.interface';
 
 @Injectable()
 export class UploadService {
@@ -17,40 +18,35 @@ export class UploadService {
     callback(null, true);
   }
 
-  public uploadFiles(files: any): Promise<any> {
+  public uploadFiles(files: any): FileContent[] {
     const data = files.map(file => {
       const fileContent = (file.buffer as Buffer).toString('latin1');
       return this.createParsedFileContent(file.originalname, fileContent);
     });
-    return Promise.resolve(data);
+    return data;
   }
 
-  public uploadPredefinedFile(fileName: string): Promise<any> {
+  public uploadPredefinedFile(fileName: string): FileContent {
     try {
-      const fileContent = fs.readFileSync(fileName, 'latin1');
-      const data = this.createParsedFileContent(fileName, fileContent);
-      return Promise.resolve(data);
-    } catch(e) {
-      console.log('Error:', e.stack);
+      const fileContent = fs.readFileSync(fileName, {encoding: 'latin1'});
+      return this.createParsedFileContent(fileName, fileContent);
+    } catch (e) {
+      throw new InternalServerErrorException('Error reading file');
     }
   }
 
-  private createParsedFileContent(name: string, content: string): any {
+  private createParsedFileContent(name: string, content: string): FileContent {
     const fileExtension = name.split('.').pop();
-    switch (fileExtension) {
-      case 'prn': return {
-        name,
-        content: this.parsePrn(content, [16, 22, 9, 14, 13, 8])
-      };
-      case 'csv': return {
-        name,
-        content: this.parseCsv(content)
-      };
-      default: return null;
+    let parsedContent = null;
+    if (fileExtension === 'prn') {
+      parsedContent = this.parsePrn(content, [16, 22, 9, 14, 13, 8]);
+    } else if (fileExtension === 'csv') {
+      parsedContent = this.parseCsv(content);
     }
+    return {name, content: parsedContent};
   }
 
-  private parsePrn(data: string, columnLengths: number[]): any {
+  private parsePrn(data: string, columnLengths: number[]): string[][] {
     const textLines = data.split('\n');
     const lineValues = textLines.filter(tl => tl).map(tl => {
       let remainingTextLine = tl;
@@ -64,7 +60,7 @@ export class UploadService {
     return lineValues;
   }
 
-  private parseCsv(data: string): any {
+  private parseCsv(data: string): string[][] {
     const lineValues = csvParser(data, {
       skip_empty_lines: true
     });
