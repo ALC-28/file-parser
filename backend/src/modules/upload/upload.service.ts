@@ -26,9 +26,9 @@ export class UploadService {
     return data;
   }
 
-  public uploadPredefinedFile(fileName: string): FileContent {
+  public async uploadPredefinedFile(fileName: string): Promise<FileContent> {
     try {
-      const fileContent = fs.readFileSync(fileName, {encoding: 'latin1'});
+      const fileContent = await fs.promises.readFile(fileName, {encoding: 'latin1'});
       return this.createParsedFileContent(fileName, fileContent);
     } catch (e) {
       throw new InternalServerErrorException('Error reading file');

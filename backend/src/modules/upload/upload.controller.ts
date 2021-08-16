@@ -14,7 +14,7 @@ export class UploadController {
   }
 
   @Post('predefined')
-  uploadPredefinedFile(@Body('fileName') fileName: string): FileContent {
+  uploadPredefinedFile(@Body('fileName') fileName: string): Promise<FileContent> {
     return this.uploadService.uploadPredefinedFile(fileName);
   }
 }
